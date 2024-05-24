@@ -1,1 +1,1 @@
-# Geoinfomational-model
+# Geoinformational-model

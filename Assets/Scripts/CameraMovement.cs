@@ -9,7 +9,7 @@ public class CameraMovement : MonoBehaviour
 {
     public Camera cam;
     public float minCamSize, maxCamSize;
-    private float zoomModifierSpeed = 0.1f;
+    private float zoomModifierSpeed = 0.05f;
     public GameObject map;
     public SpriteRenderer mapRenderer;
     private float mapScaleX;

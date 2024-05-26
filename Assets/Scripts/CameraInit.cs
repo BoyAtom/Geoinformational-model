@@ -23,6 +23,6 @@ public class CameraInit : MonoBehaviour
     void initCamera() {
         cameraHeight = mapSize.height / spriteRenderer.sprite.pixelsPerUnit / 2f;
         GetComponent<CameraMovement>().maxCamSize = cameraHeight;
-        cam.orthographicSize = cameraHeight;
+        //cam.orthographicSize = cameraHeight;
     }
 }

@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
 using System;
+using System.Security.Cryptography;
 
 public class InfoScene : MonoBehaviour
 {
@@ -32,8 +33,6 @@ public class InfoScene : MonoBehaviour
     {
         name = PlayerPrefs.GetString("name");
         description = PlayerPrefs.GetString("name");
-        enterprise = PlayerPrefs.GetString("name");
-        company = PlayerPrefs.GetString("name");
 
         key = PlayerPrefs.GetInt("EnterpriseKey");
         GetEnterpriseFromDB();
@@ -53,19 +52,18 @@ public class InfoScene : MonoBehaviour
     int entKey;
 
     public void Save() {
-        SendDataToDB();
-        PlayerPrefs.SetInt("EnterpriseKey", entKey);
+        //SendDataToDB();
+        //PlayerPrefs.SetInt("EnterpriseKey", entKey);
         SceneManager.LoadSceneAsync("MapScene");
     }
 
     void GetEnterpriseFromDB() {
+        DataBases.DataBase.InitDatabasePath();
         DataTable dt = DataBases.DataBase.GetTable(String.Format("SELECT * FROM Enterprises WHERE Key = '{0}'", key));
-
-        /*
-        print(dt.Rows[0][0].ToString());
-        print(dt.Rows[0][1].ToString());
-        print(dt.Rows[0][2].ToString());
-        */
+        foreach (DataRow row in dt.Rows) {
+            name = row["Name"].ToString();
+            description = row["Description"].ToString();
+        }
     }
     void SendDataToDB(){
         DataBases.DataBase.InitDatabasePath();

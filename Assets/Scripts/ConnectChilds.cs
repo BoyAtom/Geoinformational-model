@@ -10,6 +10,8 @@ public class ConnectChilds : MonoBehaviour
     GameObject enterprice_button;
     [SerializeField]
     string enterprise_name = "Visual Basic";
+    [SerializeField]
+    int enterprise_key = 1;
     string tag_name = "Dots";
     LineRenderer lr;
     List<Vector3> dots = new List<Vector3>();
@@ -27,6 +29,7 @@ public class ConnectChilds : MonoBehaviour
         GameObject mid = Instantiate(enterprice_button, middle, Quaternion.identity);
         mid.transform.SetParent(transform);
         mid.GetComponent<EnterpriseButtons>().name = enterprise_name;
+        mid.GetComponent<EnterpriseButtons>().key = enterprise_key;
         ConnectDots();
     }
 

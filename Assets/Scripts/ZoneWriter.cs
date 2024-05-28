@@ -76,7 +76,7 @@ public class ZoneWriter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        InitZones();
+        //InitZones();
     }
 
     void InitZones()

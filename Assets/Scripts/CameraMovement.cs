@@ -39,6 +39,7 @@ public class CameraMovement : MonoBehaviour
         ZoomCamera();
     }
 
+    //Перемещение камеры
     private void PanCamera()
     {
         if (Input.GetMouseButtonDown(0))
@@ -54,6 +55,7 @@ public class CameraMovement : MonoBehaviour
         }
     }
 
+    //Зум камеры
     private void ZoomCamera() 
     {
         if (Input.touchCount == 2) {

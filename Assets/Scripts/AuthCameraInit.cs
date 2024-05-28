@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
-public class CameraInit : MonoBehaviour
+public class AuthCameraInit : MonoBehaviour
 {
     [SerializeField]
     private Camera cam;
@@ -22,7 +22,6 @@ public class CameraInit : MonoBehaviour
 
     void initCamera() {
         cameraHeight = mapSize.height / spriteRenderer.sprite.pixelsPerUnit / 2f;
-        GetComponent<CameraMovement>().maxCamSize = cameraHeight;
         cam.orthographicSize = cameraHeight;
     }
 }

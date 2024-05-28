@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class OnEnterpriseClick : MonoBehaviour
 {
@@ -21,8 +22,13 @@ public class OnEnterpriseClick : MonoBehaviour
             if (hit.collider.gameObject.tag == "EnterpriceButton" && hit.collider != null)
             {
                 string text = hit.collider.gameObject.GetComponent<EnterpriseButtons>().name;
+                int Key = hit.collider.gameObject.GetComponent<EnterpriseButtons>().key;
 
-                _ShowAndroidToastMessage(text);
+                PlayerPrefs.SetString("name", text);
+                PlayerPrefs.SetInt("EnterpriseKey", Key);
+                
+                SceneManager.LoadSceneAsync("MoreInfo");
+                //_ShowAndroidToastMessage(text);
                 print(text);
             }
         }

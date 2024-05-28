@@ -21,16 +21,12 @@ public class ConnectChilds : MonoBehaviour
             if (D.tag != tag_name) break;
 
             dots.Add(D.position);
-            D.GetComponent<Button>().onClick.AddListener(ShowName);
         }
 
         Vector3 middle = GetMiddle();
         GameObject mid = Instantiate(enterprice_button, middle, Quaternion.identity);
         mid.transform.SetParent(transform);
         mid.GetComponent<EnterpriseButtons>().name = enterprise_name;
-
-        
-
         ConnectDots();
     }
 

@@ -1,11 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
-using Mono.Data.Sqlite;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.TerrainUtils;
 using UnityEngine.UI;
 
 public class ZoneWriter : MonoBehaviour
@@ -133,7 +130,7 @@ public class ZoneWriter : MonoBehaviour
     {
         int onDestroy = PlayerPrefs.GetInt("OnDestroy");
         if (onDestroy != -42) {
-            //DestroyEnterprise(onDestroy);
+            DestroyEnterprise(onDestroy);
         }
 
         DataBases.DataBase.InitDatabasePath();
@@ -234,8 +231,8 @@ public class ZoneWriter : MonoBehaviour
     void DestroyEnterprise(int destroyKey) {
         DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("DELETE FROM Enterprises WHERE Key = ('{0}')", destroyKey));
         DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("DELETE FROM Tags WHERE Enterprise = ('{0}')", destroyKey));
-        DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("DELETE FROM Industries WHERE Enterprise = ('{0}')", destroyKey));
-        DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("DELETE FROM Company WHERE Enterprise = ('{0}')", destroyKey));
+        //DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("DELETE FROM Industries WHERE Enterprise = ('{0}')", destroyKey));
+        //DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("DELETE FROM Company WHERE Enterprise = ('{0}')", destroyKey));
         DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("DELETE FROM Colors WHERE Enterprise = ('{0}')", destroyKey));
     }
 

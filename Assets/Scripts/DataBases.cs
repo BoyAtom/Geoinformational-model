@@ -15,33 +15,43 @@ public class DataBases
         private static SqliteConnection connection;
         private static SqliteCommand command;
 
+        [System.Obsolete]
         public DataBase()
         {
             DBPath = GetDatabasePath();
         }
 
+        [System.Obsolete]
         public static void InitDatabasePath() {
             DBPath = GetDatabasePath();
         }
 
+        private static string path;
+
         /// <summary> Возвращает путь к БД. Если её нет в нужной папке на Андроиде, то копирует её с исходного apk файла. </summary>
+        [System.Obsolete]
         public static string GetDatabasePath()
         {
-            #if UNITY_EDITOR
-                return Path.Combine(Application.streamingAssetsPath, fileName);
-            #elif UNITY_STANDALONE
-                string filePath = Path.Combine(Application.dataPath, fileName);
-                if(!File.Exists(filePath)) UnpackDatabase(filePath);
-                return filePath;
-            #elif UNITY_ANDROID
-                string filePath = Path.Combine(Application.persistentDataPath, fileName);
-                if(!File.Exists(filePath)) UnpackDatabase(filePath);
-                return filePath;
-            #endif
+            if(Application.platform != RuntimePlatform.Android)
+            {
+                path = Application.dataPath + "/StreamingAssets/" + fileName; // Путь для Windows
+            }
+            else
+            {
+                path = Application.persistentDataPath + "/" + fileName; // Путь для Android
+                if(!File.Exists(path))
+                {
+                     WWW load = new WWW("jar:file://" + Application.dataPath + "!/assets/" + fileName);
+                     while (!load.isDone) { }
+                     File.WriteAllBytes(path, load.bytes);
+                }
+            }
+            return path;
         }
 
         /// <summary> Распаковывает базу данных в указанный путь. </summary>
         /// <param name="toPath"> Путь в который нужно распаковать базу данных. </param>
+        [System.Obsolete]
         public static void UnpackDatabase(string toPath)
         {
             string fromPath = Path.Combine(Application.streamingAssetsPath, fileName);
@@ -55,7 +65,6 @@ public class DataBases
         /// <summary> Этот метод открывает подключение к БД. </summary>
         public static void OpenConnection()
         {
-            Debug.Log("Data Source=" + DBPath);
             connection = new SqliteConnection("Data Source=" + DBPath);
             command = new SqliteCommand(connection);
             connection.Open();

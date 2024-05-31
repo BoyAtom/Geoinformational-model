@@ -11,11 +11,11 @@ using System.Security.Cryptography;
 
 public class InfoScene : MonoBehaviour
 {
-
-    string name;
-    string description;
-    string enterprise;
-    string company;
+    string name = "Name";
+    string description = "Description";
+    string industry = "Industry";
+    string company = "Company";
+    string IsNew = "t";
     int key;
 
     [SerializeField]
@@ -25,63 +25,138 @@ public class InfoScene : MonoBehaviour
     [SerializeField]
     TMP_InputField description_input;
     [SerializeField]
-    TMP_InputField enterprise_input;
+    TMP_InputField industry_input;
     [SerializeField]
     TMP_InputField company_input;
 
+    [Obsolete]
     void Start()
     {
-        name = PlayerPrefs.GetString("name");
-        description = PlayerPrefs.GetString("name");
-
         key = PlayerPrefs.GetInt("EnterpriseKey");
-        GetEnterpriseFromDB();
+        IsNew = PlayerPrefs.GetString("IsNew");
 
-        print(name);
-
-        InitText();
+        if (IsNew.Equals("f")) {
+            GetEnterpriseFromDB();
+            InitText();
+        }
+        else if (IsNew.Equals("t")) {
+            InitText();
+        }
     }
 
     void InitText() {
         name_input.text = name;
         description_input.text = description;
-        //enterprise_input.text = enterprise;
-        //company_input.text = company;
+        industry_input.text = industry;
+        company_input.text = company;
     }
 
-    int entKey;
+    void GetText() {
+        name = name_input.text;
+        description = description_input.text;
+        industry = industry_input.text;
+        company = company_input.text;
+    }
 
+    public void GetName() {
+        name = name_input.text;
+    }
+
+    public void GetDescription() {
+        description = description_input.text;
+    }
+
+    public void GetIndustry() {
+        industry = industry_input.text;
+    }
+
+    public void GetCompany() {
+        company = company_input.text;
+    }
+
+    [Obsolete]
     public void Save() {
-        //SendDataToDB();
-        //PlayerPrefs.SetInt("EnterpriseKey", entKey);
-        SceneManager.LoadSceneAsync("MapScene");
+        if (IsNew.Equals("f")) {
+            UpdateEnterprise();
+        }
+        else if (IsNew.Equals("t")){
+            NewEnteprise();
+        }
+        SceneManager.LoadScene("MapScene");
     }
 
+    [Obsolete]
     void GetEnterpriseFromDB() {
         DataBases.DataBase.InitDatabasePath();
-        DataTable dt = DataBases.DataBase.GetTable(String.Format("SELECT * FROM Enterprises WHERE Key = '{0}'", key));
-        foreach (DataRow row in dt.Rows) {
+        DataTable DTEnterprise = DataBases.DataBase.GetTable(string.Format("SELECT * FROM Enterprises WHERE Key = '{0}'", key));
+        DataTable DTIndustry = DataBases.DataBase.GetTable(string.Format("SELECT * FROM Industries WHERE Enterprise = '{0}'", key));
+        DataTable DTCompany = DataBases.DataBase.GetTable(string.Format("SELECT * FROM Company WHERE Enterprise = '{0}'", key));
+        DataTable DTColor = DataBases.DataBase.GetTable(string.Format("SELECT * FROM Colors WHERE Enterprise = '{0}'", key));
+        foreach (DataRow row in DTEnterprise.Rows) {
             name = row["Name"].ToString();
             description = row["Description"].ToString();
         }
+        foreach (DataRow row in DTIndustry.Rows) {
+            industry = row["Name"].ToString();
+        }
+        foreach (DataRow row in DTCompany.Rows) {
+            company = row["Name"].ToString();
+        }
+        foreach (DataRow row in DTColor.Rows) {
+            float r = float.Parse(row["Red"].ToString());
+            float g = float.Parse(row["Green"].ToString());
+            float b = float.Parse(row["Blue"].ToString());
+
+            color.GetComponent<GetCurrentColorMoreInfo>().red.value = r;
+            color.GetComponent<GetCurrentColorMoreInfo>().green.value = g;
+            color.GetComponent<GetCurrentColorMoreInfo>().blue.value = b;
+        }
     }
-    void SendDataToDB(){
+
+    [Obsolete]
+    void NewEnteprise(){
+        GetText();
         DataBases.DataBase.InitDatabasePath();
         
-        DataBases.DataBase.ExecuteQueryWithoutAnswer(String.Format("INSERT INTO Enterprises(Name, Description) VALUES ('{0}', '{1}')", name, description));
-        DataTable dt = DataBases.DataBase.GetTable(String.Format("SELECT Key FROM Enterprises WHERE name = '{0}'", name));
+        DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("REPLACE INTO Enterprises(Key, Name, Description) VALUES ('{0}', '{1}', '{2}')", key, name, description));
+        DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("INSERT INTO Industries(Enterprise, Name) VALUES ('{0}', '{1}')", key, industry));
+        DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("INSERT INTO Company(Enterprise, Name) VALUES ('{0}', '{1}')", key, company));
         
-        int entKey = int.Parse(dt.Rows[0][0].ToString());
-        
-        int red = (int) color.GetComponent<GetCurrentColorMoreInfo>().red.value;
-        int green = (int) color.GetComponent<GetCurrentColorMoreInfo>().green.value;
-        int blue = (int) color.GetComponent<GetCurrentColorMoreInfo>().blue.value;
+        float red = color.GetComponent<GetCurrentColorMoreInfo>().red.value;
+        float green = color.GetComponent<GetCurrentColorMoreInfo>().green.value;
+        float blue = color.GetComponent<GetCurrentColorMoreInfo>().blue.value;
 
-        DataBases.DataBase.ExecuteQueryWithoutAnswer(String.Format("INSERT INTO Color(Enterprise, Red, Green, Blue) VALUES ({0}, {1}, {2}, {3})", entKey, red, green, blue));
+        DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("INSERT INTO Colors(Enterprise, Red, Green, Blue) VALUES ('{0}', '{1}', '{2}', '{3}')", key, red, green, blue));
+    }
+
+    [Obsolete]
+    void UpdateEnterprise() {
+        DataBases.DataBase.InitDatabasePath();
+
+        DataTable IndusDT = DataBases.DataBase.GetTable(string.Format("SELECT ID FROM Industries WHERE Enterprise = '{0}'", key));
+        DataTable CompaDT = DataBases.DataBase.GetTable(string.Format("SELECT ID FROM Company WHERE Enterprise = '{0}'", key));
+        DataTable ColorDT = DataBases.DataBase.GetTable(string.Format("SELECT ID FROM Colors WHERE Enterprise = '{0}'", key));
+
+        int IndusID = int.Parse(IndusDT.Rows[0][0].ToString());
+        int CompaID = int.Parse(CompaDT.Rows[0][0].ToString());
+        int ColorID = int.Parse(ColorDT.Rows[0][0].ToString());
+
+        DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("REPLACE INTO Enterprises(Key, Name, Description) VALUES ('{0}', '{1}', '{2}')", key, name, description));
+        DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("REPLACE INTO Industries(ID, Enterprise, Name) VALUES ('{0}', '{1}', '{2}')", IndusID, key, industry));
+        DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("REPLACE INTO Company(ID, Enterprise, Name) VALUES ('{0}', '{0}', '{2}')", CompaID, key, company));
+        
+        float red = color.GetComponent<GetCurrentColorMoreInfo>().red.value;
+        float green = color.GetComponent<GetCurrentColorMoreInfo>().green.value;
+        float blue = color.GetComponent<GetCurrentColorMoreInfo>().blue.value;
+
+        DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("REPLACE INTO Colors(ID, Enterprise, Red, Green, Blue) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}')", ColorID, key, red, green, blue));
+
+        PlayerPrefs.SetInt("OnDestroy", -42);
     }
 
     public void Cancel () {
-        PlayerPrefs.SetInt("EnterpriseKey", -1);
+        if (IsNew.Equals("f")) PlayerPrefs.SetInt("OnDestroy", -42);
+        else PlayerPrefs.SetInt("OnDestroy", key);
         SceneManager.LoadSceneAsync("MapScene");
     }
 }

@@ -21,32 +21,13 @@ public class OnEnterpriseClick : MonoBehaviour
 
             if (hit.collider.gameObject.tag == "EnterpriceButton" && hit.collider != null)
             {
-                string text = hit.collider.gameObject.GetComponent<EnterpriseButtons>().name;
                 int Key = hit.collider.gameObject.GetComponent<EnterpriseButtons>().key;
 
-                PlayerPrefs.SetString("name", text);
                 PlayerPrefs.SetInt("EnterpriseKey", Key);
+                PlayerPrefs.SetString("IsNew", "f");
                 
-                SceneManager.LoadSceneAsync("MoreInfo");
-                //_ShowAndroidToastMessage(text);
-                print(text);
+                SceneManager.LoadScene("MoreInfo");
             }
-        }
-    }
-
-    private void _ShowAndroidToastMessage(string message)
-    {
-        AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-        AndroidJavaObject unityActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-
-        if (unityActivity != null)
-        {
-            AndroidJavaClass toastClass = new AndroidJavaClass("android.widget.Toast");
-            unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
-            {
-                AndroidJavaObject toastObject = toastClass.CallStatic<AndroidJavaObject>("makeText", unityActivity, message, 0);
-                toastObject.Call("show");
-            }));
         }
     }
 }

@@ -16,7 +16,7 @@ public class OnEnterpriseClick : MonoBehaviour
         {
             RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
-            if (hit.collider.gameObject.tag == "EnterpriceButton" && hit.collider != null)
+            if (hit.collider.gameObject.CompareTag("EnterpriceButton") && hit.collider != null)
             {
                 int Key = hit.collider.gameObject.GetComponent<EnterpriseButtons>().key;
 

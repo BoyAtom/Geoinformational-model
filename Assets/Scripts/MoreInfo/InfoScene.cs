@@ -8,13 +8,12 @@ public class InfoScene : MonoBehaviour
 {
     string old_name = "Name";
     string old_description = "Description";
+    string old_industry = "Industry";
+    string old_company = "Description";
     string new_name = "Name";
     string new_description = "Description";
-
-    /*
-    string industry = "Industry";
-    string company = "Company";
-    */
+    string new_industry = "Industry";
+    string new_company = "Company";
     string IsNew = "t";
     int key;
 
@@ -24,12 +23,10 @@ public class InfoScene : MonoBehaviour
     TMP_InputField name_input;
     [SerializeField]
     TMP_InputField description_input;
-    /*
     [SerializeField]
     TMP_InputField industry_input;
     [SerializeField]
     TMP_InputField company_input;
-    */
 
     [Obsolete]
     void Start()
@@ -48,22 +45,15 @@ public class InfoScene : MonoBehaviour
     void InitText() {
         name_input.text = old_name;
         description_input.text = old_description;
-        //industry_input.text = industry;
-        //company_input.text = company;
-    }
-
-    void SetText() {
-        name_input.text = new_name;
-        description_input.text = new_description;
-        //industry_input.text = industry;
-        //company_input.text = company;
+        industry_input.text = old_industry;
+        company_input.text = old_company;
     }
 
     void GetText() {
         new_name = name_input.text;
         new_description = description_input.text;
-        //industry = industry_input.text;
-        //company = company_input.text;
+        new_industry = industry_input.text;
+        new_company = company_input.text;
     }
 
     public void GetName() {
@@ -74,15 +64,13 @@ public class InfoScene : MonoBehaviour
         new_description = description_input.text;
     }
 
-    /*
     public void GetIndustry() {
-        industry = industry_input.text;
+        new_industry = industry_input.text;
     }
 
     public void GetCompany() {
-        company = company_input.text;
+        new_company = company_input.text;
     }
-    */
 
     [Obsolete]
     public void Save() {
@@ -95,26 +83,30 @@ public class InfoScene : MonoBehaviour
         SceneManager.LoadScene("MapScene");
     }
 
+    public void Cancel () {
+        if (IsNew.Equals("f")) PlayerPrefs.SetInt("OnDestroy", -42);
+        else PlayerPrefs.SetInt("OnDestroy", key);
+        SceneManager.LoadSceneAsync("MapScene");
+    }
+
+    public void Delete() {
+        PlayerPrefs.SetInt("OnDestroy", key);
+        SceneManager.LoadSceneAsync("MapScene");
+    }
+
     [Obsolete]
     void GetEnterpriseFromDB() {
         DataBases.DataBase.InitDatabasePath();
         DataTable DTEnterprise = DataBases.DataBase.GetTable(string.Format("SELECT * FROM Enterprises WHERE Key = '{0}'", key));
-        //DataTable DTIndustry = DataBases.DataBase.GetTable(string.Format("SELECT * FROM Industries WHERE Enterprise = '{0}'", key));
-        //DataTable DTCompany = DataBases.DataBase.GetTable(string.Format("SELECT * FROM Company WHERE Enterprise = '{0}'", key));
         DataTable DTColor = DataBases.DataBase.GetTable(string.Format("SELECT * FROM Colors WHERE Enterprise = '{0}'", key));
         foreach (DataRow row in DTEnterprise.Rows) {
             old_name = row["Name"].ToString();
             old_description = row["Description"].ToString();
+            old_company = row["Company"].ToString();
+            old_industry = row["Industry"].ToString();
         }
         InitText();
-        /*
-        foreach (DataRow row in DTIndustry.Rows) {
-            industry = row["Name"].ToString();
-        }
-        foreach (DataRow row in DTCompany.Rows) {
-            company = row["Name"].ToString();
-        }
-        */
+
         foreach (DataRow row in DTColor.Rows) {
             float r = int.Parse(row["Red"].ToString()) / 255;
             float g = int.Parse(row["Green"].ToString()) / 255;
@@ -124,7 +116,6 @@ public class InfoScene : MonoBehaviour
             color.GetComponent<GetCurrentColorMoreInfo>().green.value = g;
             color.GetComponent<GetCurrentColorMoreInfo>().blue.value = b;
         }
-        name_input.readOnly = true;
     }
 
     [Obsolete]
@@ -132,9 +123,7 @@ public class InfoScene : MonoBehaviour
         GetText();
         DataBases.DataBase.InitDatabasePath();
         
-        DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("REPLACE INTO Enterprises(Key, Name, Description) VALUES ('{0}', '{1}', '{2}')", key, new_name, new_description));
-        //DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("INSERT INTO Industries(Enterprise, Name) VALUES ('{0}', '{1}')", key, industry));
-        //DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("INSERT INTO Company(Enterprise, Name) VALUES ('{0}', '{1}')", key, company));
+        DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("REPLACE INTO Enterprises(Key, Name, Description, Company, Industry) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}')",key, new_name, new_description, new_company, new_industry));
         
         int red = (int) (color.GetComponent<GetCurrentColorMoreInfo>().red.value * 255);
         int green = (int) (color.GetComponent<GetCurrentColorMoreInfo>().green.value * 255);
@@ -145,20 +134,14 @@ public class InfoScene : MonoBehaviour
 
     [Obsolete]
     void UpdateEnterprise() {
+        GetText();
         DataBases.DataBase.InitDatabasePath();
 
-        //DataTable IndusDT = DataBases.DataBase.GetTable(string.Format("SELECT ID FROM Industries WHERE Enterprise = '{0}'", key));
-        //DataTable CompaDT = DataBases.DataBase.GetTable(string.Format("SELECT ID FROM Company WHERE Enterprise = '{0}'", key));
         DataTable ColorDT = DataBases.DataBase.GetTable(string.Format("SELECT ID FROM Colors WHERE Enterprise = '{0}'", key));
 
-        //int IndusID = int.Parse(IndusDT.Rows[0][0].ToString());
-        //int CompaID = int.Parse(CompaDT.Rows[0][0].ToString());
         int ColorID = int.Parse(ColorDT.Rows[0][0].ToString());
 
-        DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("REPLACE INTO Enterprises(Key, Description) VALUES ('{0}', '{1}')", key, new_description));
-
-        //DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("REPLACE INTO Industries(ID, Enterprise, Name) VALUES ('{0}', '{1}', '{2}')", IndusID, key, industry));
-        //DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("REPLACE INTO Company(ID, Enterprise, Name) VALUES ('{0}', '{0}', '{2}')", CompaID, key, company));
+        DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("REPLACE INTO Enterprises(Key, Name, Description, Company, Industry) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}')", key, new_name, new_description, new_company, new_industry));
         
         int red = (int) (color.GetComponent<GetCurrentColorMoreInfo>().red.value*255);
         int green = (int) (color.GetComponent<GetCurrentColorMoreInfo>().green.value*255);
@@ -167,11 +150,5 @@ public class InfoScene : MonoBehaviour
         DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("REPLACE INTO Colors(ID, Enterprise, Red, Green, Blue) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}')", ColorID, key, red, green, blue));
 
         PlayerPrefs.SetInt("OnDestroy", -42);
-    }
-
-    public void Cancel () {
-        if (IsNew.Equals("f")) PlayerPrefs.SetInt("OnDestroy", -42);
-        else PlayerPrefs.SetInt("OnDestroy", key);
-        SceneManager.LoadSceneAsync("MapScene");
     }
 }

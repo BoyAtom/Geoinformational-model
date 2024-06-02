@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class ConnectChilds : MonoBehaviour
 {
+    public Color buttonColor;
     [SerializeField]
     GameObject enterprice_button;
     [SerializeField]
@@ -21,6 +22,7 @@ public class ConnectChilds : MonoBehaviour
         mid = Instantiate(enterprice_button, middle, Quaternion.identity);
         mid.transform.SetParent(transform);
         mid.GetComponent<EnterpriseButtons>().key = enterprise_key;
+        mid.GetComponent<SpriteRenderer>().color = buttonColor;
         ConnectDots();
     }
 

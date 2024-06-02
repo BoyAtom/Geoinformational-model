@@ -45,6 +45,7 @@ public class ZoneWriter : MonoBehaviour
         public void SetColor(Color color) {
             this.go_enterprise.GetComponent<LineRenderer>().startColor = color;
             this.go_enterprise.GetComponent<LineRenderer>().endColor = color;
+            this.go_enterprise.GetComponent<ConnectChilds>().buttonColor = new Color(color.r, color.g, color.b, 110);
         }
 
         public void CreateEnterprise (GameObject enterprise, Vector2 pos, GameObject parent) {
@@ -122,7 +123,6 @@ public class ZoneWriter : MonoBehaviour
     List<Dot> _dots = new List<Dot>();
     List<Dot> temp_dots = new List<Dot>();
     List<ColorDB> _colors = new List<ColorDB>();
-    int current_count = 0;
 
     // Start is called before the first frame update
     [System.Obsolete]
@@ -131,20 +131,16 @@ public class ZoneWriter : MonoBehaviour
         int onDestroy = PlayerPrefs.GetInt("OnDestroy");
         if (onDestroy != -42) {
             DestroyEnterprise(onDestroy);
+            PlayerPrefs.SetInt("OnDestroy", -42);
         }
 
         DataBases.DataBase.InitDatabasePath();
-        DataTable entData = DataBases.DataBase.GetTable("SELECT * FROM Enterprises");
-        current_count = entData.Rows.Count;
-
         InitEnterprises();
     }
 
     [System.Obsolete]
     void InitEnterprises()
     {
-        PlayerPrefs.SetInt("OnDestroy", -42);
-
         DataBases.DataBase.InitDatabasePath();
         DataTable dots = DataBases.DataBase.GetTable("SELECT * FROM Tags");
         DataTable enterprises = DataBases.DataBase.GetTable("SELECT * FROM Enterprises");
@@ -156,8 +152,6 @@ public class ZoneWriter : MonoBehaviour
             _enterprises.Add(new Enterprise(Key, Name));
         }
 
-        StartCoroutine(Waiter());
-
         foreach (DataRow row in colors.Rows) {
             int enterprise_id = int.Parse(row["Enterprise"].ToString());
             float r = float.Parse(row["Red"].ToString());
@@ -166,16 +160,12 @@ public class ZoneWriter : MonoBehaviour
             _colors.Add(new ColorDB(enterprise_id, r, g, b));
         }
 
-        StartCoroutine(Waiter());
-
         foreach (DataRow row in dots.Rows) {
             int enterprise_id = int.Parse(row["Enterprise"].ToString());
             float x = float.Parse(row["X"].ToString());
             float y = float.Parse(row["Y"].ToString());
             _dots.Add(new Dot(enterprise_id, x, y));
         }
-
-        StartCoroutine(Waiter());
 
         foreach (Enterprise enterprise in _enterprises) {
             enterprise.CreateEnterprise(Enterprise_orgn, new Vector2(0, 0), Enterprise_parent);
@@ -187,8 +177,6 @@ public class ZoneWriter : MonoBehaviour
             enterprise.go_enterprise.transform.GetComponent<ConnectChilds>().enterprise_key = enterprise.Key;
         }
 
-        StartCoroutine(Waiter());
-
         foreach (Dot dot in _dots) {
             foreach (ColorDB colorDB in _colors) {
                 if (dot.Enterprise == colorDB.Enterprise) {
@@ -196,8 +184,6 @@ public class ZoneWriter : MonoBehaviour
                 }
             }
         }
-
-        StartCoroutine(Waiter());
 
         foreach (Enterprise enterprise in _enterprises) {
             foreach (ColorDB colorDB in _colors) {
@@ -207,8 +193,6 @@ public class ZoneWriter : MonoBehaviour
                 }
             enterprise.go_enterprise.transform.GetComponent<ConnectChilds>().UpdateData(); 
         }
-
-        StartCoroutine(Waiter());
     }
 
     [System.Obsolete]
@@ -216,7 +200,8 @@ public class ZoneWriter : MonoBehaviour
         DataBases.DataBase.InitDatabasePath();
 
         string newName = "NewEnterprise";
-        DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("INSERT INTO Enterprises(Key, Name) VALUES ('{0}', '{1}')", current_count+1, newName));
+        DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("INSERT INTO Enterprises(Name) VALUES ('{0}')", newName));
+        print("New enterprise created");
         DataTable keys = DataBases.DataBase.GetTable(string.Format("SELECT Key FROM Enterprises WHERE Name = ('{0}')", newName));
 
         int newDBKey = 0;
@@ -231,9 +216,9 @@ public class ZoneWriter : MonoBehaviour
     void DestroyEnterprise(int destroyKey) {
         DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("DELETE FROM Enterprises WHERE Key = ('{0}')", destroyKey));
         DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("DELETE FROM Tags WHERE Enterprise = ('{0}')", destroyKey));
-        //DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("DELETE FROM Industries WHERE Enterprise = ('{0}')", destroyKey));
-        //DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("DELETE FROM Company WHERE Enterprise = ('{0}')", destroyKey));
         DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("DELETE FROM Colors WHERE Enterprise = ('{0}')", destroyKey));
+
+        PlayerPrefs.SetInt("OnDestroy", -42);
     }
 
     Enterprise tmp_enterprise;
@@ -286,10 +271,12 @@ public class ZoneWriter : MonoBehaviour
         ButtonCancel.interactable = false;
     }
 
+    [System.Obsolete]
     public void OnRecordClick() {
         PlayerPrefs.SetString("IsNew", "t");
 
         int newKey = CreateNewEnterprise();
+        PlayerPrefs.SetInt("EnterpriseKey", newKey);
 
         SceneManager.LoadScene("MoreInfo");
     }

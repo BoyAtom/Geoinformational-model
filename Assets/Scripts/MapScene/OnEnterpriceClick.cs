@@ -16,14 +16,16 @@ public class OnEnterpriseClick : MonoBehaviour
         {
             RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
-            if (hit.collider.gameObject.CompareTag("EnterpriceButton") && hit.collider != null)
-            {
-                int Key = hit.collider.gameObject.GetComponent<EnterpriseButtons>().key;
+            if (hit.collider != null) {
+                if (hit.collider.CompareTag("EnterpriceButton"))
+                {
+                    int Key = hit.collider.gameObject.GetComponent<EnterpriseButtons>().key;
 
-                PlayerPrefs.SetInt("EnterpriseKey", Key);
-                PlayerPrefs.SetString("IsNew", "f");
-                
-                SceneManager.LoadScene("MoreInfo");
+                    PlayerPrefs.SetInt("EnterpriseKey", Key);
+                    PlayerPrefs.SetString("IsNew", "f");
+                    
+                    SceneManager.LoadScene("MoreInfo");
+                }
             }
         }
     }

@@ -3,16 +3,17 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
+using System.Collections.Generic;
 
 public class InfoScene : MonoBehaviour
 {
     string old_name = "Name";
     string old_description = "Description";
-    string old_industry = "Industry";
+    int old_industry = 0;
     string old_company = "Description";
     string new_name = "Name";
     string new_description = "Description";
-    string new_industry = "Industry";
+    int new_industry = 0;
     string new_company = "Company";
     string IsNew = "t";
     int key;
@@ -24,7 +25,7 @@ public class InfoScene : MonoBehaviour
     [SerializeField]
     TMP_InputField description_input;
     [SerializeField]
-    TMP_InputField industry_input;
+    TMP_Dropdown industry_input;
     [SerializeField]
     TMP_InputField company_input;
 
@@ -33,6 +34,8 @@ public class InfoScene : MonoBehaviour
     {
         key = PlayerPrefs.GetInt("EnterpriseKey");
         IsNew = PlayerPrefs.GetString("IsNew");
+
+        InitIndustries();
 
         if (IsNew.Equals("f")) {
             GetEnterpriseFromDB();
@@ -45,14 +48,14 @@ public class InfoScene : MonoBehaviour
     void InitText() {
         name_input.text = old_name;
         description_input.text = old_description;
-        industry_input.text = old_industry;
+        industry_input.value = old_industry;
         company_input.text = old_company;
     }
 
     void GetText() {
         new_name = name_input.text;
         new_description = description_input.text;
-        new_industry = industry_input.text;
+        new_industry = industry_input.value;
         new_company = company_input.text;
     }
 
@@ -65,7 +68,8 @@ public class InfoScene : MonoBehaviour
     }
 
     public void GetIndustry() {
-        new_industry = industry_input.text;
+        new_industry = industry_input.value;
+        print(new_industry);
     }
 
     public void GetCompany() {
@@ -103,7 +107,7 @@ public class InfoScene : MonoBehaviour
             old_name = row["Name"].ToString();
             old_description = row["Description"].ToString();
             old_company = row["Company"].ToString();
-            old_industry = row["Industry"].ToString();
+            old_industry = int.Parse(row["Industry"].ToString());
         }
         InitText();
 
@@ -116,6 +120,20 @@ public class InfoScene : MonoBehaviour
             color.GetComponent<GetCurrentColorMoreInfo>().green.value = g;
             color.GetComponent<GetCurrentColorMoreInfo>().blue.value = b;
         }
+    }
+
+    List<string> industries = new List<string>();
+    [System.Obsolete]
+    public void InitIndustries(){
+        DataBases.DataBase.InitDatabasePath();
+        DataTable industriesDT = DataBases.DataBase.GetTable("SELECT * FROM Industries");
+
+        foreach (DataRow industry in industriesDT.Rows) {
+            industries.Add(industry["Name"].ToString());
+        }
+
+        industry_input.ClearOptions();
+        industry_input.AddOptions(industries);
     }
 
     [Obsolete]

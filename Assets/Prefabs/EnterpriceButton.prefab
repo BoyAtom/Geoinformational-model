@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6165777573625505789}
   - component: {fileID: 6322502597154416384}
   - component: {fileID: 6630302329767526880}
-  - component: {fileID: 5126568709707150120}
+  - component: {fileID: 321513625317206592}
   m_Layer: 0
   m_Name: EnterpriceButton
   m_TagString: EnterpriceButton
@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -121,7 +121,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
---- !u!114 &5126568709707150120
+--- !u!114 &321513625317206592
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -130,8 +130,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 1110141410148809561}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85beb99f4d7d82648bcf2a522f145f6d, type: 3}
+  m_Script: {fileID: 11500000, guid: 6d76d633876420e42a7937f6d99f884a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   name: asdf
-  key: 0
+  key: 1

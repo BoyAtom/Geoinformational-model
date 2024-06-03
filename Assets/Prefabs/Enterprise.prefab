@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4735019709324852159}
   - component: {fileID: 6943619131144526901}
   - component: {fileID: 7486593466061995095}
+  - component: {fileID: 3436434976554156927}
   m_Layer: 0
   m_Name: Enterprise
   m_TagString: Untagged
@@ -86,7 +87,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.093024254
+        value: 0.0048036575
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -146,8 +147,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 2696801505457257171}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b69819922ec5f8243897f4f32876d275, type: 3}
+  m_Script: {fileID: 11500000, guid: 7746b8b9e8d681e459f6611a364bd600, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonColor: {r: 1, g: 0, b: 0, a: 0.43137255}
   enterprice_button: {fileID: 1110141410148809561, guid: ca09441a5d6402c4d993fa50a48e8348, type: 3}
-  enterprise_name: Visual Basic
+  enterprise_key: 1
+--- !u!114 &3436434976554156927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2696801505457257171}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e135b56894ad05048aca2692b2f27335, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

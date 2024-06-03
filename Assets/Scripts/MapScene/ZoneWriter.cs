@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -18,6 +19,10 @@ public class ZoneWriter : MonoBehaviour
     Button ButtonRecord;
     [SerializeField]
     Button ButtonCancel;
+    [SerializeField]
+    Toggle toggle;
+    [SerializeField]
+    TMP_Dropdown DropdownIndustries;
 
     IEnumerator Waiter() {
         yield return new WaitForSeconds(0.5f);
@@ -28,11 +33,12 @@ public class ZoneWriter : MonoBehaviour
         public int Key;
         public string Name;
         public string Description;
+        public int Industry;
 
-        public Enterprise (int key, string name, string description) {
+        public Enterprise (int key, string name, int industry) {
             this.Key = key;
             this.Name = name;
-            this.Description = description;
+            this.Industry = industry;
         }
 
         public Enterprise (int key, string name) {
@@ -120,6 +126,7 @@ public class ZoneWriter : MonoBehaviour
             return new Color(r, g, b);
         }
     }
+    List<string> industries = new List<string>();
     List<Dot> _dots = new List<Dot>();
     List<Dot> temp_dots = new List<Dot>();
     List<ColorDB> _colors = new List<ColorDB>();
@@ -128,6 +135,9 @@ public class ZoneWriter : MonoBehaviour
     [System.Obsolete]
     void Start()
     {
+        InitIndustries();
+        OnToggleClick();
+
         int onDestroy = PlayerPrefs.GetInt("OnDestroy");
         if (onDestroy != -42) {
             DestroyEnterprise(onDestroy);
@@ -138,18 +148,25 @@ public class ZoneWriter : MonoBehaviour
         InitEnterprises();
     }
 
-    [System.Obsolete]
-    void InitEnterprises()
+    public void InitEnterprises()
     {
         DataBases.DataBase.InitDatabasePath();
+
+        ClearMap();
+
         DataTable dots = DataBases.DataBase.GetTable("SELECT * FROM Tags");
-        DataTable enterprises = DataBases.DataBase.GetTable("SELECT * FROM Enterprises");
+        DataTable enterprises;
+        if (toggle.isOn) {
+            enterprises = DataBases.DataBase.GetTable(string.Format("SELECT * FROM Enterprises WHERE Industry = '{0}'", DropdownIndustries.value));
+        }
+        else enterprises = DataBases.DataBase.GetTable("SELECT * FROM Enterprises");
         DataTable colors = DataBases.DataBase.GetTable("SELECT * FROM Colors");
         
         foreach (DataRow row in enterprises.Rows) {
             int Key = int.Parse(row["Key"].ToString());
             string Name = row["Name"].ToString();
-            _enterprises.Add(new Enterprise(Key, Name));
+            int indust = int.Parse(row["Industry"].ToString());
+            _enterprises.Add(new Enterprise(Key, Name, indust));
         }
 
         foreach (DataRow row in colors.Rows) {
@@ -196,6 +213,20 @@ public class ZoneWriter : MonoBehaviour
     }
 
     [System.Obsolete]
+    public void InitIndustries(){
+        DataBases.DataBase.InitDatabasePath();
+        DataTable industriesDT = DataBases.DataBase.GetTable("SELECT * FROM Industries");
+
+        foreach (DataRow industry in industriesDT.Rows) {
+            print(industry["Name"].ToString());
+            industries.Add(industry["Name"].ToString());
+        }
+
+        DropdownIndustries.ClearOptions();
+        DropdownIndustries.AddOptions(industries);
+    }
+
+    [System.Obsolete]
     int CreateNewEnterprise(){
         DataBases.DataBase.InitDatabasePath();
 
@@ -211,6 +242,18 @@ public class ZoneWriter : MonoBehaviour
         foreach (Dot dot in temp_dots) DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("INSERT INTO Tags(Enterprise, X, Y) VALUES ('{0}', '{1}', '{2}')", newDBKey, dot.x, dot.y));
 
         return newDBKey;
+    }
+
+    void ClearMap(){
+        foreach (Dot dot in _dots) {
+            dot.DestroyDot();        
+        }
+        _dots.Clear();
+        foreach (Enterprise enterprise in _enterprises) {
+            enterprise.DestroyEnterprise();
+        }
+        _enterprises.Clear();
+        _colors.Clear();
     }
 
     void DestroyEnterprise(int destroyKey) {
@@ -239,7 +282,7 @@ public class ZoneWriter : MonoBehaviour
 
                 if (tmp_enterprise == null) {
 
-                    tmp_enterprise = new Enterprise(-1, "Temp", "Temp");
+                    tmp_enterprise = new Enterprise(-1, "Temp", 0);
 
                     ButtonRecord.interactable = true;
                     ButtonCancel.interactable = true;
@@ -271,7 +314,6 @@ public class ZoneWriter : MonoBehaviour
         ButtonCancel.interactable = false;
     }
 
-    [System.Obsolete]
     public void OnRecordClick() {
         PlayerPrefs.SetString("IsNew", "t");
 
@@ -279,5 +321,10 @@ public class ZoneWriter : MonoBehaviour
         PlayerPrefs.SetInt("EnterpriseKey", newKey);
 
         SceneManager.LoadScene("MoreInfo");
+    }
+
+    public void OnToggleClick() {
+        InitEnterprises();
+        DropdownIndustries.interactable = toggle.isOn;
     }
 }

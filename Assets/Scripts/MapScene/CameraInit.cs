@@ -18,8 +18,13 @@ public class CameraInit : MonoBehaviour
     }
 
     void initCamera() {
-        cameraHeight = mapSize.height / spriteRenderer.sprite.pixelsPerUnit / 2f;
-        GetComponent<CameraMovement>().maxCamSize = cameraHeight;
-        cam.orthographicSize = cameraHeight;
+        if (transform.position.x.Equals(0) && transform.position.x.Equals(0)){
+            cameraHeight = mapSize.height / spriteRenderer.sprite.pixelsPerUnit / 2f;
+            GetComponent<CameraMovement>().maxCamSize = cameraHeight;
+            cam.orthographicSize = cameraHeight;
+        }
+        else {
+            cam.orthographicSize = PlayerPrefs.GetFloat("CamSize");
+        }
     }
 }

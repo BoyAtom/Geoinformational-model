@@ -22,7 +22,7 @@ public class ConnectChilds : MonoBehaviour
         mid = Instantiate(enterprice_button, middle, Quaternion.identity);
         mid.transform.SetParent(transform);
         mid.GetComponent<EnterpriseButtons>().key = enterprise_key;
-        mid.GetComponent<SpriteRenderer>().color = buttonColor;
+        mid.GetComponent<SpriteRenderer>().color = new Color(buttonColor.r, buttonColor.g, buttonColor.b, 110);
         ConnectDots();
     }
 
@@ -37,7 +37,6 @@ public class ConnectChilds : MonoBehaviour
         foreach (Transform D in transform.GetComponentInChildren<Transform>()){
             if (D.tag == tag_name) dots.Add(D.position);
         }
-        print(dots.Count);
     }
 
     private Vector2 GetMiddle(){
@@ -48,8 +47,6 @@ public class ConnectChilds : MonoBehaviour
             x += D.x / dots.Count;
             y += D.y / dots.Count;
         }
-
-        print(x + " / " + y);
 
         return new Vector2(x, y);
     }

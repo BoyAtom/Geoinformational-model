@@ -12,11 +12,14 @@ public class CameraMovement : MonoBehaviour
     private float mapMinX, mapMaxX, mapMinY, mapMaxY;
     private Vector3 dragOrigin;
 
-
     private void Start() 
     {
         mapScaleX = map.transform.localScale.x;
         mapScaleY = map.transform.localScale.y;
+
+        float remX = PlayerPrefs.GetFloat("CamX");
+        float remY = PlayerPrefs.GetFloat("CamY");
+        cam.transform.position = ClampCamera(new Vector3(remX, remY, -10));
     }
 
     private void Awake() {
@@ -47,6 +50,8 @@ public class CameraMovement : MonoBehaviour
             //print("origin " + dragOrigin + " newPosition " + cam.ScreenToWorldPoint(Input.mousePosition) + " =difference" + difference);
 
             cam.transform.position = ClampCamera(cam.transform.position + difference);
+            PlayerPrefs.SetFloat("CamX", cam.transform.position.x);
+            PlayerPrefs.SetFloat("CamY", cam.transform.position.y);
         }
     }
 
@@ -73,6 +78,7 @@ public class CameraMovement : MonoBehaviour
 		}
 
 		cam.orthographicSize = Mathf.Clamp (cam.orthographicSize, minCamSize, maxCamSize);
+        PlayerPrefs.SetFloat("CamSize", cam.orthographicSize);
     }
 
 

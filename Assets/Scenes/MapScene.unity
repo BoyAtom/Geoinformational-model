@@ -2329,8 +2329,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 52870805}
         m_TargetAssemblyTypeName: ToMapScene, Assembly-CSharp
-        m_MethodName: 
-        m_Mode: 1
+        m_MethodName: GoToScene
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2554,7 +2554,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1490204979}
         m_TargetAssemblyTypeName: ZoneWriter, Assembly-CSharp
-        m_MethodName: InitEnterprises
+        m_MethodName: OnIndustriesClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

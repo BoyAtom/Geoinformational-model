@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Runtime.InteropServices;
 using Mono.Data.Sqlite;
 using UnityEngine;
 
@@ -10,7 +7,7 @@ public class DataBases
 {
     public class DataBase
     {
-        private const string fileName = "GEOData.db";
+        private const string fileName = "GeoInfo.db";
         private static string DBPath;
         private static SqliteConnection connection;
         private static SqliteCommand command;

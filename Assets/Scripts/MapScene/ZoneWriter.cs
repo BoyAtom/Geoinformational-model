@@ -136,7 +136,6 @@ public class ZoneWriter : MonoBehaviour
     void Start()
     {
         InitIndustries();
-        OnToggleClick();
 
         int onDestroy = PlayerPrefs.GetInt("OnDestroy");
         if (onDestroy != -42) {
@@ -148,6 +147,21 @@ public class ZoneWriter : MonoBehaviour
         InitEnterprises();
     }
 
+    void SetSettings() {
+        PlayerPrefs.SetInt("CurrentIndustry", DropdownIndustries.value);
+        if (!DropdownIndustries.interactable) {
+            PlayerPrefs.SetInt("SettingIsOn", 0);
+        }
+        else PlayerPrefs.SetInt("SettingIsOn", 1);
+    }
+
+    void GetSettings() {
+        DropdownIndustries.value = PlayerPrefs.GetInt("CurrentIndustry");
+        if (PlayerPrefs.GetInt("SettingIsOn").Equals(1)) toggle.isOn = true;
+        else if (PlayerPrefs.GetInt("SettingIsOn").Equals(0)) toggle.isOn = false;
+        DropdownIndustries.interactable = toggle.isOn;
+    }
+
     public void InitEnterprises()
     {
         DataBases.DataBase.InitDatabasePath();
@@ -155,6 +169,9 @@ public class ZoneWriter : MonoBehaviour
         ClearMap();
 
         DataTable dots = DataBases.DataBase.GetTable("SELECT * FROM Tags");
+
+        GetSettings();
+
         DataTable enterprises;
         if (toggle.isOn) {
             enterprises = DataBases.DataBase.GetTable(string.Format("SELECT * FROM Enterprises WHERE Industry = '{0}'", DropdownIndustries.value));
@@ -218,7 +235,6 @@ public class ZoneWriter : MonoBehaviour
         DataTable industriesDT = DataBases.DataBase.GetTable("SELECT * FROM Industries");
 
         foreach (DataRow industry in industriesDT.Rows) {
-            print(industry["Name"].ToString());
             industries.Add(industry["Name"].ToString());
         }
 
@@ -272,24 +288,19 @@ public class ZoneWriter : MonoBehaviour
         if (Input.GetMouseButtonDown(0)) {
             buttonPressedTime = 0f;
         }
-
         if (Input.GetMouseButton(0)) {
             buttonPressedTime += Time.deltaTime;
 
             if (buttonPressedTime >= 3f) {
-
                 buttonPressedTime = 0f;
 
                 if (tmp_enterprise == null) {
-
                     tmp_enterprise = new Enterprise(-1, "Temp", 0);
-
                     ButtonRecord.interactable = true;
                     ButtonCancel.interactable = true;
 
                     tmp_enterprise.CreateEnterprise(Enterprise_orgn, new Vector2(0, 0), Enterprise_parent);
                 }
-
                 Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 print(pos);
 
@@ -323,8 +334,15 @@ public class ZoneWriter : MonoBehaviour
         SceneManager.LoadScene("MoreInfo");
     }
 
-    public void OnToggleClick() {
+    public void OnIndustriesClick() {
+        SetSettings();
         InitEnterprises();
+    }
+
+    public void OnToggleClick() {
         DropdownIndustries.interactable = toggle.isOn;
+
+        SetSettings();
+        InitEnterprises();
     }
 }

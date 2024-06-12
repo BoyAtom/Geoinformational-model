@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,7 +10,10 @@ using UnityEngine.UI;
 
 public class ZoneWriter : MonoBehaviour
 {
-
+    [SerializeField]
+    Camera mainCamera;
+    [SerializeField]
+    SpriteRenderer mapRenderer;
     [SerializeField]
     GameObject Enterprise_orgn;
     [SerializeField]
@@ -51,7 +56,7 @@ public class ZoneWriter : MonoBehaviour
         public void SetColor(Color color) {
             this.go_enterprise.GetComponent<LineRenderer>().startColor = color;
             this.go_enterprise.GetComponent<LineRenderer>().endColor = color;
-            this.go_enterprise.GetComponent<ConnectChilds>().buttonColor = new Color(color.r, color.g, color.b, 110);
+            this.go_enterprise.GetComponent<ConnectChilds>().buttonColor = new Color(color.r, color.g, color.b, 50f);
         }
 
         public void CreateEnterprise (GameObject enterprise, Vector2 pos, GameObject parent) {
@@ -100,8 +105,9 @@ public class ZoneWriter : MonoBehaviour
 
         public void CreateDot(GameObject dot, Vector2 pos, GameObject parent) {
             SetCoords(pos);
-            this.go_dot = Instantiate(dot, pos, Quaternion.identity);
+            this.go_dot = Instantiate(dot, new Vector3(0f, 0f), Quaternion.identity);
             this.go_dot.transform.parent = parent.transform;
+            this.go_dot.transform.position = new Vector2(this.x, this.y);
         }
 
         public void DestroyDot() {
@@ -123,22 +129,24 @@ public class ZoneWriter : MonoBehaviour
         }
 
         public Color returnColor () {
-            return new Color(r, g, b);
+            return new Color(r, g, b, 50);
         }
     }
     List<string> industries = new List<string>();
     List<Dot> _dots = new List<Dot>();
     List<Dot> temp_dots = new List<Dot>();
     List<ColorDB> _colors = new List<ColorDB>();
+    bool is_guest = false;
 
     // Start is called before the first frame update
     [System.Obsolete]
     void Start()
     {
         InitIndustries();
+        is_guest = CheckGuest();
 
         int onDestroy = PlayerPrefs.GetInt("OnDestroy");
-        if (onDestroy != -42) {
+        if (onDestroy != -42 && !is_guest) {
             DestroyEnterprise(onDestroy);
             PlayerPrefs.SetInt("OnDestroy", -42);
         }
@@ -147,7 +155,19 @@ public class ZoneWriter : MonoBehaviour
         InitEnterprises();
     }
 
-    void SetSettings() {
+    bool CheckGuest() {
+        if (PlayerPrefs.GetInt("AreLogIn") == 1) return false;
+        else return true;
+    }
+
+    string CheckMap(){
+        if (PlayerPrefs.GetString("ImageDIR") != "Empty") {
+            return PlayerPrefs.GetString("ImageDIR");
+        }
+        else return "Empty";
+    }
+
+    public void SetSettings() {
         PlayerPrefs.SetInt("CurrentIndustry", DropdownIndustries.value);
         if (!DropdownIndustries.interactable) {
             PlayerPrefs.SetInt("SettingIsOn", 0);
@@ -155,7 +175,7 @@ public class ZoneWriter : MonoBehaviour
         else PlayerPrefs.SetInt("SettingIsOn", 1);
     }
 
-    void GetSettings() {
+    public void GetSettings() {
         DropdownIndustries.value = PlayerPrefs.GetInt("CurrentIndustry");
         if (PlayerPrefs.GetInt("SettingIsOn").Equals(1)) toggle.isOn = true;
         else if (PlayerPrefs.GetInt("SettingIsOn").Equals(0)) toggle.isOn = false;
@@ -211,21 +231,21 @@ public class ZoneWriter : MonoBehaviour
             enterprise.go_enterprise.transform.GetComponent<ConnectChilds>().enterprise_key = enterprise.Key;
         }
 
-        foreach (Dot dot in _dots) {
-            foreach (ColorDB colorDB in _colors) {
+        foreach (ColorDB colorDB in _colors) {
+            foreach (Dot dot in _dots) {
                 if (dot.Enterprise == colorDB.Enterprise) {
                     dot.SetColor(colorDB.returnColor());
                 }
             }
         }
 
-        foreach (Enterprise enterprise in _enterprises) {
-            foreach (ColorDB colorDB in _colors) {
-                    if (enterprise.Key == colorDB.Enterprise) {
-                        enterprise.SetColor(colorDB.returnColor());
-                    }
+        foreach (ColorDB colorDB in _colors) {
+            foreach (Enterprise enterprise in _enterprises) {
+                if (enterprise.Key == colorDB.Enterprise) {
+                    enterprise.SetColor(colorDB.returnColor());
                 }
-            enterprise.go_enterprise.transform.GetComponent<ConnectChilds>().UpdateData(); 
+                enterprise.go_enterprise.transform.GetComponent<ConnectChilds>().UpdateData();
+            }
         }
     }
 
@@ -285,10 +305,10 @@ public class ZoneWriter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0) && !is_guest) {
             buttonPressedTime = 0f;
         }
-        if (Input.GetMouseButton(0)) {
+        if (Input.GetMouseButton(0) && !is_guest) {
             buttonPressedTime += Time.deltaTime;
 
             if (buttonPressedTime >= 3f) {

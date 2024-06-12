@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class InfoScene : MonoBehaviour
 {
@@ -28,12 +29,18 @@ public class InfoScene : MonoBehaviour
     TMP_Dropdown industry_input;
     [SerializeField]
     TMP_InputField company_input;
+    [SerializeField]
+    Button save_button;
+    [SerializeField]
+    Button delete_button;
+    bool is_guest = false;
 
     [Obsolete]
     void Start()
     {
         key = PlayerPrefs.GetInt("EnterpriseKey");
         IsNew = PlayerPrefs.GetString("IsNew");
+        is_guest = CheckGuest();
 
         InitIndustries();
 
@@ -43,6 +50,24 @@ public class InfoScene : MonoBehaviour
         else if (IsNew.Equals("t")) {
             InitText();
         }
+
+        if (is_guest) {
+            BlockActivites();   
+        }
+    }
+
+    void BlockActivites() {
+        name_input.interactable = false;
+        description_input.interactable = false;
+        industry_input.interactable = false;
+        company_input.interactable = false;
+        save_button.interactable = false;
+        delete_button.interactable = false;
+    }
+
+    bool CheckGuest() {
+        if (PlayerPrefs.GetInt("AreLogIn") == 1) return false;
+        else return true;
     }
 
     void InitText() {

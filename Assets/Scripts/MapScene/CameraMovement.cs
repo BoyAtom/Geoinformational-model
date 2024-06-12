@@ -19,10 +19,14 @@ public class CameraMovement : MonoBehaviour
 
         float remX = PlayerPrefs.GetFloat("CamX");
         float remY = PlayerPrefs.GetFloat("CamY");
-        cam.transform.position = ClampCamera(new Vector3(remX, remY, -10));
+        cam.transform.position = new Vector3(0, 0, -10);
     }
 
     private void Awake() {
+        GetCamLimits();
+    }
+
+    public void GetCamLimits() {
         mapMinX = -mapRenderer.bounds.size.x * map.transform.localScale.x / 2f;
         mapMaxX = mapRenderer.bounds.size.x * map.transform.localScale.x / 2f;
 
@@ -99,14 +103,13 @@ public class CameraMovement : MonoBehaviour
         return new Vector3(newX, newY, targetPosition.z);
     }
 
-    /*
     void OnDrawGizmosSelected() {
         Gizmos.color = Color.magenta;
-        float camHeight = cam.orthographicSize;
-        float camWidth = cam.orthographicSize * cam.aspect;
-        float X = mapMaxX + camHeight;
-        float Y = mapMaxY + camWidth;
-        Gizmos.DrawWireCube(map.transform.position, new Vector3(X, Y, mapRenderer.bounds.size.z));
+        
+        var r = mapRenderer;
+        if (r == null) return;
+        var hounds = r.bounds;
+
+        Gizmos.DrawWireCube(map.transform.position, hounds.extents * 2);
     }
-    */
 }

@@ -22,13 +22,13 @@ public class ConnectChilds : MonoBehaviour
         mid = Instantiate(enterprice_button, middle, Quaternion.identity);
         mid.transform.SetParent(transform);
         mid.GetComponent<EnterpriseButtons>().key = enterprise_key;
-        mid.GetComponent<SpriteRenderer>().color = new Color(buttonColor.r, buttonColor.g, buttonColor.b, 110);
         ConnectDots();
     }
 
     public void UpdateData() {
         GetDots();
         ConnectDots();
+        mid.GetComponent<EnterpriseButtons>().color = buttonColor;
         mid.transform.position = GetMiddle();
     }
 

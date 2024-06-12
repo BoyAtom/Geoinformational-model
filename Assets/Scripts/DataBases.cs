@@ -31,11 +31,11 @@ public class DataBases
         {
             if(Application.platform != RuntimePlatform.Android)
             {
-                path = Application.dataPath + "/StreamingAssets/" + fileName; // Путь для Windows
+                path = Application.dataPath + "/StreamingAssets/DataBases/" + fileName; // Путь для Windows
             }
             else
             {
-                path = Application.persistentDataPath + "/" + fileName; // Путь для Android
+                path = Application.persistentDataPath + "/DataBases/" + fileName; // Путь для Android
                 if(!File.Exists(path))
                 {
                      WWW load = new WWW("jar:file://" + Application.dataPath + "!/assets/" + fileName);

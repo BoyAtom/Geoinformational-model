@@ -22,7 +22,7 @@ public class LogInActivity : MonoBehaviour
         if (answer.Equals("Success")) {
             PlayerPrefs.SetInt("AreLogIn", 1);
             SceneManager.LoadScene(targetScene);
-        } 
+        }
     }
 
     public void AsGuest(){

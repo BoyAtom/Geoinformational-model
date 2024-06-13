@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7746b8b9e8d681e459f6611a364bd600, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonColor: {r: 1, g: 1, b: 1, a: 0.19607843}
+  buttonColor: {r: 1, g: 1, b: 1, a: 0.3137255}
   enterprice_button: {fileID: 1110141410148809561, guid: ca09441a5d6402c4d993fa50a48e8348, type: 3}
   enterprise_key: 1
 --- !u!114 &3436434976554156927

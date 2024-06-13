@@ -34,6 +34,7 @@ public class InfoScene : MonoBehaviour
     [SerializeField]
     Button delete_button;
     bool is_guest = false;
+    string DBName = "GeoInfo.db";
 
     [Obsolete]
     void Start()
@@ -41,6 +42,7 @@ public class InfoScene : MonoBehaviour
         key = PlayerPrefs.GetInt("EnterpriseKey");
         IsNew = PlayerPrefs.GetString("IsNew");
         is_guest = CheckGuest();
+        CheckDB();
 
         InitIndustries();
 
@@ -53,6 +55,12 @@ public class InfoScene : MonoBehaviour
 
         if (is_guest) {
             BlockActivites();   
+        }
+    }
+
+    void CheckDB(){
+        if (PlayerPrefs.HasKey("DataBaseDIR")) {
+            DBName = PlayerPrefs.GetString("DataBaseDIR");
         }
     }
 
@@ -125,7 +133,7 @@ public class InfoScene : MonoBehaviour
 
     [Obsolete]
     void GetEnterpriseFromDB() {
-        DataBases.DataBase.InitDatabasePath();
+        DataBases.DataBase.InitDatabasePath(DBName);
         DataTable DTEnterprise = DataBases.DataBase.GetTable(string.Format("SELECT * FROM Enterprises WHERE Key = '{0}'", key));
         DataTable DTColor = DataBases.DataBase.GetTable(string.Format("SELECT * FROM Colors WHERE Enterprise = '{0}'", key));
         foreach (DataRow row in DTEnterprise.Rows) {
@@ -137,9 +145,9 @@ public class InfoScene : MonoBehaviour
         InitText();
 
         foreach (DataRow row in DTColor.Rows) {
-            float r = int.Parse(row["Red"].ToString()) / 255;
-            float g = int.Parse(row["Green"].ToString()) / 255;
-            float b = int.Parse(row["Blue"].ToString()) / 255;
+            float r = float.Parse(row["Red"].ToString());
+            float g = float.Parse(row["Green"].ToString());
+            float b = float.Parse(row["Blue"].ToString());
 
             color.GetComponent<GetCurrentColorMoreInfo>().red.value = r;
             color.GetComponent<GetCurrentColorMoreInfo>().green.value = g;
@@ -148,9 +156,9 @@ public class InfoScene : MonoBehaviour
     }
 
     List<string> industries = new List<string>();
-    [System.Obsolete]
+    [Obsolete]
     public void InitIndustries(){
-        DataBases.DataBase.InitDatabasePath();
+        DataBases.DataBase.InitDatabasePath(DBName);
         DataTable industriesDT = DataBases.DataBase.GetTable("SELECT * FROM Industries");
 
         foreach (DataRow industry in industriesDT.Rows) {
@@ -164,13 +172,13 @@ public class InfoScene : MonoBehaviour
     [Obsolete]
     void NewEnteprise(){
         GetText();
-        DataBases.DataBase.InitDatabasePath();
+        DataBases.DataBase.InitDatabasePath(DBName);
         
         DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("REPLACE INTO Enterprises(Key, Name, Description, Company, Industry) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}')",key, new_name, new_description, new_company, new_industry));
         
-        int red = (int) (color.GetComponent<GetCurrentColorMoreInfo>().red.value * 255);
-        int green = (int) (color.GetComponent<GetCurrentColorMoreInfo>().green.value * 255);
-        int blue = (int) (color.GetComponent<GetCurrentColorMoreInfo>().blue.value * 255);
+        float red = color.GetComponent<GetCurrentColorMoreInfo>().red.value;
+        float green = color.GetComponent<GetCurrentColorMoreInfo>().green.value;
+        float blue = color.GetComponent<GetCurrentColorMoreInfo>().blue.value;
 
         DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("INSERT INTO Colors(Enterprise, Red, Green, Blue) VALUES ('{0}', '{1}', '{2}', '{3}')", key, red, green, blue));
     }
@@ -178,7 +186,7 @@ public class InfoScene : MonoBehaviour
     [Obsolete]
     void UpdateEnterprise() {
         GetText();
-        DataBases.DataBase.InitDatabasePath();
+        DataBases.DataBase.InitDatabasePath(DBName);
 
         DataTable ColorDT = DataBases.DataBase.GetTable(string.Format("SELECT ID FROM Colors WHERE Enterprise = '{0}'", key));
 
@@ -186,9 +194,9 @@ public class InfoScene : MonoBehaviour
 
         DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("REPLACE INTO Enterprises(Key, Name, Description, Company, Industry) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}')", key, new_name, new_description, new_company, new_industry));
         
-        int red = (int) (color.GetComponent<GetCurrentColorMoreInfo>().red.value*255);
-        int green = (int) (color.GetComponent<GetCurrentColorMoreInfo>().green.value*255);
-        int blue = (int) (color.GetComponent<GetCurrentColorMoreInfo>().blue.value*255);
+        float red = color.GetComponent<GetCurrentColorMoreInfo>().red.value;
+        float green = color.GetComponent<GetCurrentColorMoreInfo>().green.value;
+        float blue = color.GetComponent<GetCurrentColorMoreInfo>().blue.value;
 
         DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("REPLACE INTO Colors(ID, Enterprise, Red, Green, Blue) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}')", ColorID, key, red, green, blue));
 

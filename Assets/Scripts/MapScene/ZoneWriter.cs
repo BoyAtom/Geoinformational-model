@@ -54,14 +54,24 @@ public class ZoneWriter : MonoBehaviour
         public Enterprise () {}
 
         public void SetColor(Color color) {
-            this.go_enterprise.GetComponent<LineRenderer>().startColor = color;
-            this.go_enterprise.GetComponent<LineRenderer>().endColor = color;
-            this.go_enterprise.GetComponent<ConnectChilds>().buttonColor = new Color(color.r, color.g, color.b, 50f);
+            this.go_enterprise.GetComponent<LineRenderer>().startColor = new Color(color.r, color.g, color.b);
+            this.go_enterprise.GetComponent<LineRenderer>().endColor = new Color(color.r, color.g, color.b);
+            this.go_enterprise.GetComponent<ConnectChilds>().buttonColor = color;
         }
 
-        public void CreateEnterprise (GameObject enterprise, Vector2 pos, GameObject parent) {
+        public void CreateEnterprise(GameObject enterprise, Vector2 pos, GameObject parent, List<ColorDB> colors) {
             this.go_enterprise = Instantiate(enterprise, pos, Quaternion.identity);
             this.go_enterprise.transform.parent = parent.transform;
+
+            Color clr = new Color(1, 0, 0, 0.32f);
+            foreach (ColorDB color in colors) {
+                if (this.Key.Equals(color.Enterprise)) {
+                    clr = color.returnColor();
+                    break;
+                }
+            }
+
+            SetColor(clr);
         }
 
         public void DestroyEnterprise() {
@@ -100,14 +110,25 @@ public class ZoneWriter : MonoBehaviour
         }
 
         public void SetColor(Color color){
-            this.go_dot.GetComponent<SpriteRenderer>().color = color;
+            Color clr = this.go_dot.GetComponentInParent<ConnectChilds>().buttonColor;
+            this.go_dot.GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b);
         }
 
-        public void CreateDot(GameObject dot, Vector2 pos, GameObject parent) {
+        public void CreateDot(GameObject dot, Vector2 pos, GameObject parent, List<ColorDB> colors) {
             SetCoords(pos);
             this.go_dot = Instantiate(dot, new Vector3(0f, 0f), Quaternion.identity);
             this.go_dot.transform.parent = parent.transform;
             this.go_dot.transform.position = new Vector2(this.x, this.y);
+
+            Color clr = new Color(1, 0, 0);
+            foreach (ColorDB color in colors) {
+                if (color.Enterprise.Equals(this.Enterprise)) {
+                    clr = color.returnColor();
+                    break;
+                }
+            }
+
+            SetColor(clr);
         }
 
         public void DestroyDot() {
@@ -129,7 +150,7 @@ public class ZoneWriter : MonoBehaviour
         }
 
         public Color returnColor () {
-            return new Color(r, g, b, 50);
+            return new Color(r, g, b, 0.32f);
         }
     }
     List<string> industries = new List<string>();
@@ -137,6 +158,7 @@ public class ZoneWriter : MonoBehaviour
     List<Dot> temp_dots = new List<Dot>();
     List<ColorDB> _colors = new List<ColorDB>();
     bool is_guest = false;
+    string DBName = "GeoInfo.db";
 
     // Start is called before the first frame update
     [System.Obsolete]
@@ -144,6 +166,7 @@ public class ZoneWriter : MonoBehaviour
     {
         InitIndustries();
         is_guest = CheckGuest();
+        CheckDB();
 
         int onDestroy = PlayerPrefs.GetInt("OnDestroy");
         if (onDestroy != -42 && !is_guest) {
@@ -151,13 +174,19 @@ public class ZoneWriter : MonoBehaviour
             PlayerPrefs.SetInt("OnDestroy", -42);
         }
 
-        DataBases.DataBase.InitDatabasePath();
+        DataBases.DataBase.InitDatabasePath(DBName);
         InitEnterprises();
     }
 
     bool CheckGuest() {
         if (PlayerPrefs.GetInt("AreLogIn") == 1) return false;
         else return true;
+    }
+
+    void CheckDB(){
+        if (PlayerPrefs.HasKey("DataBaseDIR")) {
+            DBName = PlayerPrefs.GetString("DataBaseDIR");
+        }
     }
 
     string CheckMap(){
@@ -184,7 +213,7 @@ public class ZoneWriter : MonoBehaviour
 
     public void InitEnterprises()
     {
-        DataBases.DataBase.InitDatabasePath();
+        DataBases.DataBase.InitDatabasePath(DBName);
 
         ClearMap();
 
@@ -221,37 +250,42 @@ public class ZoneWriter : MonoBehaviour
             _dots.Add(new Dot(enterprise_id, x, y));
         }
 
+        //Создание разметки
         foreach (Enterprise enterprise in _enterprises) {
-            enterprise.CreateEnterprise(Enterprise_orgn, new Vector2(0, 0), Enterprise_parent);
+            enterprise.CreateEnterprise(Enterprise_orgn, new Vector2(0, 0), Enterprise_parent, _colors);
             foreach (Dot dot in _dots) {
                 if (dot.Enterprise == enterprise.Key) {
-                    dot.CreateDot(Dot_orgn, new Vector2(dot.x, dot.y), enterprise.go_enterprise);
+                    dot.CreateDot(Dot_orgn, new Vector2(dot.x, dot.y), enterprise.go_enterprise, _colors);
                 }
             }
             enterprise.go_enterprise.transform.GetComponent<ConnectChilds>().enterprise_key = enterprise.Key;
         }
 
+        /*
         foreach (ColorDB colorDB in _colors) {
-            foreach (Dot dot in _dots) {
+            foreach (Enterprise enterprise in _enterprises) {
+                print(colorDB.Enterprise + " = " + enterprise.Key);
+                if (enterprise.Key == colorDB.Enterprise) {
+                    enterprise.SetColor(colorDB.returnColor());
+                    break;
+                }
+            }
+        }
+
+        foreach (Dot dot in _dots) {
+            foreach (ColorDB colorDB in _colors) {
+                print(dot.Enterprise + " = " + colorDB.Enterprise);
                 if (dot.Enterprise == colorDB.Enterprise) {
                     dot.SetColor(colorDB.returnColor());
                 }
             }
         }
-
-        foreach (ColorDB colorDB in _colors) {
-            foreach (Enterprise enterprise in _enterprises) {
-                if (enterprise.Key == colorDB.Enterprise) {
-                    enterprise.SetColor(colorDB.returnColor());
-                }
-                enterprise.go_enterprise.transform.GetComponent<ConnectChilds>().UpdateData();
-            }
-        }
+        */
     }
 
     [System.Obsolete]
     public void InitIndustries(){
-        DataBases.DataBase.InitDatabasePath();
+        DataBases.DataBase.InitDatabasePath(DBName);
         DataTable industriesDT = DataBases.DataBase.GetTable("SELECT * FROM Industries");
 
         foreach (DataRow industry in industriesDT.Rows) {
@@ -264,7 +298,7 @@ public class ZoneWriter : MonoBehaviour
 
     [System.Obsolete]
     int CreateNewEnterprise(){
-        DataBases.DataBase.InitDatabasePath();
+        DataBases.DataBase.InitDatabasePath(DBName);
 
         string newName = "NewEnterprise";
         DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("INSERT INTO Enterprises(Name) VALUES ('{0}')", newName));
@@ -282,7 +316,7 @@ public class ZoneWriter : MonoBehaviour
 
     void ClearMap(){
         foreach (Dot dot in _dots) {
-            dot.DestroyDot();        
+            dot.DestroyDot();       
         }
         _dots.Clear();
         foreach (Enterprise enterprise in _enterprises) {
@@ -319,13 +353,13 @@ public class ZoneWriter : MonoBehaviour
                     ButtonRecord.interactable = true;
                     ButtonCancel.interactable = true;
 
-                    tmp_enterprise.CreateEnterprise(Enterprise_orgn, new Vector2(0, 0), Enterprise_parent);
+                    tmp_enterprise.CreateEnterprise(Enterprise_orgn, new Vector2(0, 0), Enterprise_parent, _colors);
                 }
                 Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 print(pos);
 
                 Dot tmp_dot = new Dot();
-                tmp_dot.CreateDot(Dot_orgn, new Vector2(pos.x, pos.y), tmp_enterprise.go_enterprise);
+                tmp_dot.CreateDot(Dot_orgn, new Vector2(pos.x, pos.y), tmp_enterprise.go_enterprise, _colors);
                 temp_dots.Add(tmp_dot);
                 tmp_enterprise.go_enterprise.transform.GetComponent<ConnectChilds>().UpdateData();
             }

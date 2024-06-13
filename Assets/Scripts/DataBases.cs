@@ -7,7 +7,7 @@ public class DataBases
 {
     public class DataBase
     {
-        private const string fileName = "GeoInfo.db";
+        private static string fileName = "GeoInfo.db";
         private static string DBPath;
         private static SqliteConnection connection;
         private static SqliteCommand command;
@@ -19,7 +19,8 @@ public class DataBases
         }
 
         [System.Obsolete]
-        public static void InitDatabasePath() {
+        public static void InitDatabasePath(string name) {
+            fileName = name;
             DBPath = GetDatabasePath();
         }
 

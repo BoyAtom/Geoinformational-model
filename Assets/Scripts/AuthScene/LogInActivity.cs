@@ -14,8 +14,19 @@ public class LogInActivity : MonoBehaviour
     TMP_InputField passwordField;
     [SerializeField]
     string targetScene;
+    string DBName = "GeoInfo.db";
 
 
+    void Start() {
+        CheckDB();
+    }
+
+    void CheckDB(){
+        if (PlayerPrefs.HasKey("DataBaseDIR")) {
+            DBName = PlayerPrefs.GetString("DataBaseDIR");
+        }
+    }
+    
     public void LogIn(){
         string answer = GetDataFromDB(loginField.text, passwordField.text);
 
@@ -33,7 +44,7 @@ public class LogInActivity : MonoBehaviour
     [System.Obsolete]
     private string GetDataFromDB(string name, string password) {
         string answer = "Hoho, error";
-        DataBases.DataBase.InitDatabasePath();
+        DataBases.DataBase.InitDatabasePath(DBName);
         if (name != "" && password != "") {
             DataTable user_info = DataBases.DataBase.GetTable(string.Format("SELECT * FROM Users WHERE Username = '{0}'", name));
             if (!user_info.Rows.Count.Equals(0)) {

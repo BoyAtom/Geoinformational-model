@@ -16,6 +16,6 @@ public class GetCurrentColorMoreInfo : MonoBehaviour
     }
 
     public void setColor(){
-        transform.GetComponent<Image>().color = new Color(red.value/255, green.value/255, blue.value/255);
+        transform.GetComponent<Image>().color = new Color(red.value, green.value, blue.value);
     }
 }

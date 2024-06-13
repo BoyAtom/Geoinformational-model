@@ -25,6 +25,13 @@ public class GetMapAndDB : MonoBehaviour
     {
         InitDirs();
 
+        if (PlayerPrefs.HasKey("ImageNum")) {
+            Images.value = PlayerPrefs.GetInt("ImageNum");
+        }
+        if (PlayerPrefs.HasKey("DBNum")) {
+            DataBases.value = PlayerPrefs.GetInt("DBNum");
+        }
+
         DataBaseDir = new DirectoryInfo(DBPath);
         ImagesDir = new DirectoryInfo(ImagesPath);
 
@@ -82,6 +89,10 @@ public class GetMapAndDB : MonoBehaviour
         return dir;
     }
 
+    public int GetNumber(TMP_Dropdown dropdown) {
+        return dropdown.value;
+    }
+
     public void OpenDir() {
         if(Application.platform == RuntimePlatform.Android) {
             Application.OpenURL(Application.persistentDataPath);
@@ -93,7 +104,10 @@ public class GetMapAndDB : MonoBehaviour
 
     public void Return() {
         PlayerPrefs.SetString("ImageDIR", GetName(Images, img));
+        PlayerPrefs.SetInt("ImageNum", GetNumber(Images));
+
         PlayerPrefs.SetString("DataBaseDIR", GetName(DataBases, db));
+        PlayerPrefs.SetInt("DBNum", GetNumber(DataBases));
 
         SceneManager.LoadSceneAsync("OptionsScene");
     }

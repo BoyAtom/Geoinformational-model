@@ -28,7 +28,6 @@ public class ConnectChilds : MonoBehaviour
     public void UpdateData() {
         GetDots();
         ConnectDots();
-        mid.GetComponent<EnterpriseButtons>().color = buttonColor;
         mid.transform.position = GetMiddle();
     }
 

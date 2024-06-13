@@ -48,6 +48,7 @@ public class LogInActivity : MonoBehaviour
     [System.Obsolete]
     private string GetDataFromDB(string name, string password) {
         string answer = "Hoho, error";
+        print(DBName);
         DataBases.DataBase.InitDatabasePath(DBName);
         if (name != "" && password != "") {
             DataTable user_info = DataBases.DataBase.GetTable(string.Format("SELECT * FROM Users WHERE Username = '{0}'", name));

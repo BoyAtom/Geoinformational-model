@@ -71,7 +71,7 @@ public class UsersSettings : MonoBehaviour
 
     public void ChangeUserData() {
         DataBases.DataBase.InitDatabasePath(DBName);
-        DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("REPLACE INTO Users(ID, Username, Password) VALUES ('{0}', '{1}', '{2}')", id[users_dropdown.value], username_field.text, password_field.text));
+        DataBases.DataBase.ExecuteQueryWithoutAnswer(string.Format("REPLACE INTO Users(ID, Username, Password, Role) VALUES ('{0}', '{1}', '{2}', '{3}')", id[users_dropdown.value], username_field.text, password_field.text, roles[users_dropdown.value]));
         InitUsersData();
         users_dropdown.value = id.Count-1;
     }

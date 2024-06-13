@@ -17,6 +17,7 @@ public class LogInActivity : MonoBehaviour
     string DBName = "GeoInfo.db";
 
     void Start() {
+        print("jar:file://"+Application.dataPath+"!/assets/" + DBName);
         CheckDB();
     }
 

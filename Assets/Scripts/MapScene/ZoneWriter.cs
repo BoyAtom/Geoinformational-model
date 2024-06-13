@@ -164,6 +164,7 @@ public class ZoneWriter : MonoBehaviour
     [System.Obsolete]
     void Start()
     {
+        InitMap("RF_okruga_2022.jpg");
         InitIndustries();
         is_guest = CheckGuest();
         CheckDB();
@@ -176,6 +177,19 @@ public class ZoneWriter : MonoBehaviour
 
         DataBases.DataBase.InitDatabasePath(DBName);
         InitEnterprises();
+    }
+
+    [Obsolete]
+    void InitMap(string map_name) {
+        if (Application.platform == RuntimePlatform.Android) {
+            string path = Application.persistentDataPath + "/Images/" + map_name;
+            if(!File.Exists(path))
+                {
+                     WWW load = new WWW("jar:file://" + Application.dataPath + "!/assets/Images/" + map_name);
+                     while (!load.isDone) { }
+                     File.WriteAllBytes(path, load.bytes);
+                }
+        }
     }
 
     bool CheckGuest() {

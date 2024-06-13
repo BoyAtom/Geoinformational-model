@@ -39,7 +39,7 @@ public class DataBases
                 path = Application.persistentDataPath + "/DataBases/" + fileName; // Путь для Android
                 if(!File.Exists(path))
                 {
-                     WWW load = new WWW("jar:file://" + Application.dataPath + "!/assets/" + fileName);
+                     WWW load = new WWW("jar:file://" + Application.dataPath + "!/assets/DataBases/" + fileName);
                      while (!load.isDone) { }
                      File.WriteAllBytes(path, load.bytes);
                 }

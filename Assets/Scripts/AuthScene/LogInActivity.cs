@@ -16,7 +16,6 @@ public class LogInActivity : MonoBehaviour
     string targetScene;
     string DBName = "GeoInfo.db";
 
-
     void Start() {
         CheckDB();
     }
@@ -26,18 +25,23 @@ public class LogInActivity : MonoBehaviour
             DBName = PlayerPrefs.GetString("DataBaseDIR");
         }
     }
-    
+
     public void LogIn(){
         string answer = GetDataFromDB(loginField.text, passwordField.text);
 
-        if (answer.Equals("Success")) {
+        if (answer.Equals("Авторизация прошла успешно")) {
             PlayerPrefs.SetInt("AreLogIn", 1);
+            SceneManager.LoadScene(targetScene);
+        }
+        else if (answer.Equals("Вход в качестве админа выполнен")) {
+            PlayerPrefs.SetInt("AreLogIn", 2);
             SceneManager.LoadScene(targetScene);
         }
     }
 
     public void AsGuest(){
         PlayerPrefs.SetInt("AreLogIn", 0);
+        if(Application.platform == RuntimePlatform.Android) GlobalData._ShowAndroidToastMessage("Вы вошли в качестве гостя - часть функционала не доступна");
         SceneManager.LoadScene(targetScene);
     }
 
@@ -49,24 +53,31 @@ public class LogInActivity : MonoBehaviour
             DataTable user_info = DataBases.DataBase.GetTable(string.Format("SELECT * FROM Users WHERE Username = '{0}'", name));
             if (!user_info.Rows.Count.Equals(0)) {
                 string passw = "";
+                string role = "0";
                 foreach (DataRow user in user_info.Rows) {
                     passw = user["Password"].ToString();
+                    role = user["Role"].ToString();
                 }
 
                 if (password.Equals(passw)) {
-                    answer = "Success";
+                    if (role == "1") {
+                        answer = "Авторизация прошла успешно";
+                    }
+                    else if (role == "0") {
+                        answer = "Вход в качестве админа выполнен";
+                    }
                 }
-                else answer = "Wrong password";
+                else answer = "Неверный пароль";
 
             }
             else {
-                answer = "No such user";
+                answer = "Нет такого имени пользователя";
             }
         }
         else {
-            answer = "Empty fields";
+            answer = "Поля для ввода данных пустые";
         }
-        GlobalData._ShowAndroidToastMessage(answer);
+        if(Application.platform == RuntimePlatform.Android) GlobalData._ShowAndroidToastMessage(answer);
         return answer;
     }
 }

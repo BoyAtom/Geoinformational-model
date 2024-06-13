@@ -25,13 +25,6 @@ public class GetMapAndDB : MonoBehaviour
     {
         InitDirs();
 
-        if (PlayerPrefs.HasKey("ImageNum")) {
-            Images.value = PlayerPrefs.GetInt("ImageNum");
-        }
-        if (PlayerPrefs.HasKey("DBNum")) {
-            DataBases.value = PlayerPrefs.GetInt("DBNum");
-        }
-
         DataBaseDir = new DirectoryInfo(DBPath);
         ImagesDir = new DirectoryInfo(ImagesPath);
 
@@ -44,6 +37,13 @@ public class GetMapAndDB : MonoBehaviour
             db.Add(fileInfo);
         }
         SetSettings(DataBases, db);
+
+        if (PlayerPrefs.HasKey("ImageNum")) {
+            Images.value = PlayerPrefs.GetInt("ImageNum");
+        }
+        if (PlayerPrefs.HasKey("DBNum")) {
+            DataBases.value = PlayerPrefs.GetInt("DBNum");
+        }
     }
 
     private void InitDirs() {
@@ -95,9 +95,10 @@ public class GetMapAndDB : MonoBehaviour
 
     public void OpenDir() {
         if(Application.platform == RuntimePlatform.Android) {
-            Application.OpenURL(Application.persistentDataPath);
+            GlobalData._ShowAndroidToastMessage(Application.persistentDataPath);
         }
         else {
+            print(Application.dataPath + "/StreamingAssets");
             Application.OpenURL(Application.dataPath + "/StreamingAssets");
         }
     }

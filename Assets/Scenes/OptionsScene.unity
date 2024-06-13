@@ -351,6 +351,7 @@ GameObject:
   - component: {fileID: 174034688}
   - component: {fileID: 174034687}
   - component: {fileID: 174034686}
+  - component: {fileID: 174034689}
   m_Layer: 5
   m_Name: UsersSettings
   m_TagString: Untagged
@@ -422,16 +423,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 865187589}
-        m_TargetAssemblyTypeName: OpenSite, Assembly-CSharp
-        m_MethodName: 
-        m_Mode: 1
+      - m_Target: {fileID: 865187588}
+        m_TargetAssemblyTypeName: ToMapScene, Assembly-CSharp
+        m_MethodName: GoToScene
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: https://github.com/BoyAtom/Geoinformational-model/blob/Documents/%D0%A0%D0%A3%D0%9A%D0%9E%D0%92%D0%9E%D0%94%D0%A1%D0%A2%D0%92%D0%9E_%D0%9F%D0%9E%D0%9B%D0%AC%D0%97%D0%9E%D0%92%D0%90%D0%A2%D0%95%D0%9B%D0%AF_%D0%93%D0%98%D0%A1_GEOMAPS.pdf
+          m_StringArgument: UsersSettings
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &174034687
@@ -472,6 +473,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 174034684}
   m_CullTransparentMesh: 1
+--- !u!114 &174034689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 174034684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c725cada90dfd4f48a2a14372938b59b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &221823997
 GameObject:
   m_ObjectHideFlags: 0
@@ -883,7 +896,6 @@ GameObject:
   - component: {fileID: 865187586}
   - component: {fileID: 865187585}
   - component: {fileID: 865187584}
-  - component: {fileID: 865187587}
   - component: {fileID: 865187588}
   - component: {fileID: 865187589}
   m_Layer: 0
@@ -943,19 +955,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &865187587
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 865187583}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b326cc3063ac8544dbf42a5c2c895ff5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  FinalPath: 
 --- !u!114 &865187588
 MonoBehaviour:
   m_ObjectHideFlags: 0

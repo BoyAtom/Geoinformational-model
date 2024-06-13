@@ -1789,6 +1789,7 @@ MonoBehaviour:
   users_dropdown: {fileID: 755073727}
   username_field: {fileID: 1554978258}
   password_field: {fileID: 797425737}
+  delete_button: {fileID: 1441187323}
 --- !u!1 &961669509
 GameObject:
   m_ObjectHideFlags: 0

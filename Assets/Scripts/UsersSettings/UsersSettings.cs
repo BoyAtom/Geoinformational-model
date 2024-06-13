@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UsersSettings : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class UsersSettings : MonoBehaviour
     TMP_InputField username_field;
     [SerializeField]
     TMP_InputField password_field;
+    [SerializeField]
+    Button delete_button;
     List<string> id = new List<string>();
     List<string> names = new List<string>();
     List<string> passwords = new List<string>();
@@ -49,6 +52,8 @@ public class UsersSettings : MonoBehaviour
         print(current_user);
         username_field.text = names[current_user];
         password_field.text = passwords[current_user];
+        if (roles[current_user].Equals("0")) delete_button.interactable = false;
+        else delete_button.interactable = true;
     }
 
     public void CreateNewUser() {

@@ -216,9 +216,6 @@ public class ZoneWriter : MonoBehaviour
         DataBases.DataBase.InitDatabasePath(DBName);
 
         ClearMap();
-
-        DataTable dots = DataBases.DataBase.GetTable("SELECT * FROM Tags");
-
         GetSettings();
 
         DataTable enterprises;
@@ -226,6 +223,7 @@ public class ZoneWriter : MonoBehaviour
             enterprises = DataBases.DataBase.GetTable(string.Format("SELECT * FROM Enterprises WHERE Industry = '{0}'", DropdownIndustries.value));
         }
         else enterprises = DataBases.DataBase.GetTable("SELECT * FROM Enterprises");
+        DataTable dots = DataBases.DataBase.GetTable("SELECT * FROM Tags");
         DataTable colors = DataBases.DataBase.GetTable("SELECT * FROM Colors");
         
         foreach (DataRow row in enterprises.Rows) {
@@ -324,6 +322,13 @@ public class ZoneWriter : MonoBehaviour
         }
         _enterprises.Clear();
         _colors.Clear();
+
+        foreach (Transform enter in transform.GetComponentInChildren<Transform>()) {
+            foreach (Transform obj in enter.GetComponentInChildren<Transform>()) {
+                Destroy(obj.gameObject);
+            }
+            Destroy(enter.gameObject);
+        }
     }
 
     void DestroyEnterprise(int destroyKey) {

@@ -20,11 +20,27 @@ public class LogInActivity : MonoBehaviour
 
     [Obsolete]
     void Start() {
-        DataBases.DataBase.InitDatabasePath(DBName);
-        DataBases.DataBase.InitDatabasePath(DBName);
+        CreateFolders();
+
         InitMap("RF_okruga_2022.jpg");
-        InitMap("RF_okruga_2022.jpg");
+        DataBases.DataBase.InitDatabasePath(DBName);
+        
         CheckDB();
+    }
+
+    void CreateFolders() {
+        if (Application.platform == RuntimePlatform.Android) {
+            string _imagePath = Application.persistentDataPath + "/Images/";
+            if( !Directory.Exists(_imagePath) )
+            {
+                Directory.CreateDirectory(_imagePath);
+            }
+            string _dbPath = Application.persistentDataPath + "/DataBases/";
+            if( !Directory.Exists(_dbPath) )
+            {
+                Directory.CreateDirectory(_dbPath);
+            }
+        }
     }
 
     [Obsolete]
@@ -32,11 +48,11 @@ public class LogInActivity : MonoBehaviour
         if (Application.platform == RuntimePlatform.Android) {
             string path = Application.persistentDataPath + "/Images/" + map_name;
             if(!File.Exists(path))
-                {
-                     WWW load = new WWW("jar:file://" + Application.dataPath + "!/assets/Images/" + map_name);
-                     while (!load.isDone) { }
-                     File.WriteAllBytes(path, load.bytes);
-                }
+            {
+                WWW load = new WWW("jar:file://" + Application.dataPath + "!/assets/Images/" + map_name);
+                while (!load.isDone) { }
+                File.WriteAllBytes(path, load.bytes);
+            }
         }
     }
 

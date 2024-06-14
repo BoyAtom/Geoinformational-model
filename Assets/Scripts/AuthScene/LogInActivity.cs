@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,9 +18,26 @@ public class LogInActivity : MonoBehaviour
     string targetScene;
     string DBName = "GeoInfo.db";
 
+    [Obsolete]
     void Start() {
-        print("jar:file://"+Application.dataPath+"!/assets/" + DBName);
+        DataBases.DataBase.InitDatabasePath(DBName);
+        DataBases.DataBase.InitDatabasePath(DBName);
+        InitMap("RF_okruga_2022.jpg");
+        InitMap("RF_okruga_2022.jpg");
         CheckDB();
+    }
+
+    [Obsolete]
+    void InitMap(string map_name) {
+        if (Application.platform == RuntimePlatform.Android) {
+            string path = Application.persistentDataPath + "/Images/" + map_name;
+            if(!File.Exists(path))
+                {
+                     WWW load = new WWW("jar:file://" + Application.dataPath + "!/assets/Images/" + map_name);
+                     while (!load.isDone) { }
+                     File.WriteAllBytes(path, load.bytes);
+                }
+        }
     }
 
     void CheckDB(){

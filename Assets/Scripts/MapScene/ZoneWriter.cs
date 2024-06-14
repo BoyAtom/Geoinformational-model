@@ -193,7 +193,7 @@ public class ZoneWriter : MonoBehaviour
     }
 
     bool CheckGuest() {
-        if (PlayerPrefs.GetInt("AreLogIn") == 1) return false;
+        if (PlayerPrefs.GetInt("AreLogIn").Equals(1) || PlayerPrefs.GetInt("AreLogIn").Equals(2)) return false;
         else return true;
     }
 

@@ -11,7 +11,7 @@ public class InfoScene : MonoBehaviour
     string old_name = "Name";
     string old_description = "Description";
     int old_industry = 0;
-    string old_company = "Description";
+    string old_company = "Company";
     string new_name = "Name";
     string new_description = "Description";
     int new_industry = 0;

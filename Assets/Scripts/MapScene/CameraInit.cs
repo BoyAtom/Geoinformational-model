@@ -14,6 +14,7 @@ public class CameraInit : MonoBehaviour
     private float cameraHeight;
 
     void Awake() {
+        print(spriteRenderer.sprite.name + ".jpg");
         if (PlayerPrefs.GetString("ImageDIR") != "Empty") SetSprite();
     }
 
@@ -29,15 +30,15 @@ public class CameraInit : MonoBehaviour
     public void SetSprite() {
         if (Application.platform != RuntimePlatform.Android) {
             print("file:///" + Application.dataPath + "/StreamingAssets/Images/" + PlayerPrefs.GetString("ImageDIR"));
-            StartCoroutine(LoadFromWeb("file:///" + Application.dataPath + "/StreamingAssets/Images/" + PlayerPrefs.GetString("ImageDIR")));
+            StartCoroutine(LoadFromWeb("file:///" + Application.dataPath + "/StreamingAssets/Images/" + PlayerPrefs.GetString("ImageDIR"), PlayerPrefs.GetString("ImageDIR")));
         }
         else {
             print("file:///" + Application.persistentDataPath + "/Images/" + PlayerPrefs.GetString("ImageDIR"));
-            StartCoroutine(LoadFromWeb("file:///" + Application.persistentDataPath + "/Images/" + PlayerPrefs.GetString("ImageDIR")));
+            StartCoroutine(LoadFromWeb("file:///" + Application.persistentDataPath + "/Images/" + PlayerPrefs.GetString("ImageDIR"), PlayerPrefs.GetString("ImageDIR")));
         }
     }
 
-    IEnumerator LoadFromWeb(string url)
+    IEnumerator LoadFromWeb(string url, string name)
     {
         UnityWebRequest wr = new UnityWebRequest(url);
         DownloadHandlerTexture texDl = new DownloadHandlerTexture(true);
@@ -48,6 +49,7 @@ public class CameraInit : MonoBehaviour
             Sprite s = Sprite.Create(t, new Rect(0, 0, t.width, t.height),
                 new Vector2(0.5f, 0.5f), 100f);
             spriteRenderer.sprite = s;
+            spriteRenderer.sprite.name = name;
             spriteRenderer.bounds = s.bounds;
         }
         else {

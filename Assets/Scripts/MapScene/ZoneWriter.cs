@@ -168,6 +168,7 @@ public class ZoneWriter : MonoBehaviour
         InitIndustries();
         is_guest = CheckGuest();
         CheckDB();
+        DataBases.DataBase.InitDatabasePath(DBName);
 
         int onDestroy = PlayerPrefs.GetInt("OnDestroy");
         if (onDestroy != -42 && !is_guest) {
@@ -175,7 +176,6 @@ public class ZoneWriter : MonoBehaviour
             PlayerPrefs.SetInt("OnDestroy", -42);
         }
 
-        DataBases.DataBase.InitDatabasePath(DBName);
         InitEnterprises();
     }
 

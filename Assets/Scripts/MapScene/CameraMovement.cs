@@ -19,7 +19,10 @@ public class CameraMovement : MonoBehaviour
 
         float remX = PlayerPrefs.GetFloat("CamX");
         float remY = PlayerPrefs.GetFloat("CamY");
-        cam.transform.position = new Vector3(0, 0, -10);
+        float remZ = PlayerPrefs.GetFloat("CamZ");
+
+        cam.transform.position = ClampCamera(new Vector3(remX, 0, -10));
+        //cam.orthographicSize = remZ;
     }
 
     private void Awake() {
@@ -50,12 +53,7 @@ public class CameraMovement : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             Vector3 difference = dragOrigin - cam.ScreenToWorldPoint(Input.mousePosition);
-            //Код ниже использовался для контроля выходных данных
-            //print("origin " + dragOrigin + " newPosition " + cam.ScreenToWorldPoint(Input.mousePosition) + " =difference" + difference);
-
             cam.transform.position = ClampCamera(cam.transform.position + difference);
-            PlayerPrefs.SetFloat("CamX", cam.transform.position.x);
-            PlayerPrefs.SetFloat("CamY", cam.transform.position.y);
         }
     }
 
@@ -78,7 +76,8 @@ public class CameraMovement : MonoBehaviour
 				cam.orthographicSize += zoomModifier;
 			if (touchesPrevPosDifference < touchesCurPosDifference)
 				cam.orthographicSize -= zoomModifier;
-			
+
+            PlayerPrefs.SetFloat("CamZ", cam.orthographicSize);
 		}
 
 		cam.orthographicSize = Mathf.Clamp (cam.orthographicSize, minCamSize, maxCamSize);
@@ -99,6 +98,9 @@ public class CameraMovement : MonoBehaviour
 
         float newX = Mathf.Clamp(targetPosition.x, minX, maxX);
         float newY = Mathf.Clamp(targetPosition.y, minY, maxY);
+
+        PlayerPrefs.SetFloat("CamX", newX);
+        PlayerPrefs.SetFloat("CamY", newY);
 
         return new Vector3(newX, newY, targetPosition.z);
     }
